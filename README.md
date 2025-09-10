@@ -39,7 +39,13 @@ Bro im lazy wait till tmrw or day after tmrw for images pls
   ![Server Bootup](https://github.com/user-attachments/assets/5b11c117-5fbf-46ea-80f5-02bb96aa0066) -->
 </details>
 
+<br/><h2 align="center">👥 Contributors</h2>
+
+Contributors help shape the future of OxygenMC. There are currently one main contributors:
+
+- [**123gg456**](https://github.com/123gg456atonix) - Made the egg.
+
 <br/><br/>
 <p align="center">
-  $\color{#4b4950}{\textsf{© 2025 OxygenMC . Made with ❤️ by [123gg456](https://github.com/123gg456atonix) .}}$
+  $\color{#4b4950}{\textsf{© 2025 OxygenMC. Made with ❤️ by 123gg456.}}$
 </p>
