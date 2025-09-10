@@ -32,8 +32,8 @@ As there are images that cannot fit inside this README, they are collapsible.
 <details>
   <summary>Click me to view the images!</summary>
 Bro im lazy wait till tmrw or day after tmrw for images pls
-  <!-- ![Main Menu](https://github.com/user-attachments/assets/b47b6bb6-fe48-49b4-a989-d76538df8250)
-  ![Software Selection](https://github.com/user-attachments/assets/3b73e924-03c8-4efd-b4ea-adee3dae4420)
+  ![Main Menu](<img width="1440" height="900" alt="image" src="https://github.com/user-attachments/assets/54173c1c-6315-4fa6-8a00-69864a1b38ab" />)
+<!--   ![Software Selection](https://github.com/user-attachments/assets/3b73e924-03c8-4efd-b4ea-adee3dae4420)
   ![Version Selection](https://github.com/user-attachments/assets/6f71edfe-6136-48f3-bece-f7a5834ce8d1)
   ![EULA Accept](https://github.com/user-attachments/assets/3994531f-17ba-4f2d-b5e7-95576d0f842c)
   ![Server Bootup](https://github.com/user-attachments/assets/5b11c117-5fbf-46ea-80f5-02bb96aa0066) -->
