@@ -193,7 +193,9 @@ function install_purpur {
 }
 
 function install_bedrock {
-       # Minecraft CDN Akamai blocks script user-agents
+    #!/bin/bash
+    echo -e "\033[93m○ Downloading and Installing Required Softwares...\e[0m"
+        # Minecraft CDN Akamai blocks script user-agents
     RANDVERSION=$(echo $((1 + $RANDOM % 4000)))
     if [ -z "${BEDROCK_VERSION}" ] || [ "${BEDROCK_VERSION}" == "latest" ]; then
         echo -e "\n Downloading latest Bedrock Server"
@@ -211,13 +213,12 @@ function install_bedrock {
     echo -e "Unpacking server files"
     unzip -o $DOWNLOAD_FILE
     echo -e "\033[93m○ Cleaning up after installing\e[0m"
-    rm $DOWNLOAD_FILE
     echo -e "\033[93m○ Restoring backup config files - on first install there will be file not found errors which you can ignore.\e[0m"
     cp -rf server.properties.bak server.properties
     cp -rf permissions.json.bak permissions.json
     cp -rf allowlist.json.bak allowlist.json
     sed -i "s|^server-port=.*|server-port="$SERVER_PORT"|g" server.properties
-    sed -i "s|^server-name=.*|server-name="Join WraithNodes For Free Server discord.gg/wraithnodes"|g" server.properties
+    sed -i "s|^server-name=.*|server-name="OxygenMC Multi-egg https://discord.gg/XrqErRqXCu"|g" server.properties
     rm -rf *.bak
     rm -rf *.txt
     chmod +x bedrock_server
