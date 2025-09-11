@@ -193,9 +193,10 @@ function install_purpur {
 }
 
 function install_bedrock {
-    echo -e "\033[93m○ Downloading and Installing Required Softwares...\e[0m"
     #!/bin/bash
-
+    echo -e "\033[93m○ Downloading and Installing Required Softwares...\e[0m"
+    
+mkdir -p /mnt/server
 cd /mnt/server || exit 1
 
 
