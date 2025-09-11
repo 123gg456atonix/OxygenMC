@@ -31,7 +31,8 @@
 As there are images that cannot fit inside this README, they are collapsible.
 <details>
   <summary>Click me to view the images!</summary>
->  - [!Main menu]
+
+> ### 🖥️ Main Menu
 > <img width="1440" height="900" alt="image" src="https://github.com/user-attachments/assets/90f25438-7f8c-4fe1-bf3c-1ac605f5a1b8" />
 
 </details>
