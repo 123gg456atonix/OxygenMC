@@ -196,11 +196,8 @@ function install_bedrock {
     echo -e "\033[93m○ Downloading and Installing Required Softwares...\e[0m"
     #!/bin/bash
 
-if [ ! -d /mnt/server/ ]; then
-    mkdir /mnt/server/
-fi
+cd /mnt/server || exit 1
 
-cd /mnt/server
 
 # Minecraft CDN Akamai blocks script user-agents
 RANDVERSION=$(echo $((1 + $RANDOM % 4000)))
