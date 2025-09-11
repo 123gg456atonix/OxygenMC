@@ -37,7 +37,8 @@ As there are images that cannot fit inside this README, they are collapsible.
 </details>
 
 <h2 align="center">📛 How to use?</h2>
-You can either download the egg file directly from **Here** or build the egg and customize it with your preferences.
+
+You can either download the egg file directly from [**Here**](https://github.com/123gg456atonix/OxygenMC.git) or build the egg and customize it with your preferences.
 <br></br>
 
 > [!NOTE]
