@@ -82,7 +82,6 @@ function launchJavaServer {
 
 function launchBedrockVanillaServer {
     echo -e "\033[92m● Starting Minecraft Bedrock Server...\e[0m"
-    sed -i "s|^server-name=.*|server-name="OxygenMC https://discord.gg/XrqErRqXCu"|g" server.properties
     LD_LIBRARY_PATH=. ./bedrock_server
 }
 
@@ -197,9 +196,6 @@ function install_bedrock {
     echo -e "\033[93m○ Downloading and Installing Required Softwares...\e[0m"
     #!/bin/bash
 
-apt update
-apt install -y zip unzip wget curl
-
 if [ ! -d /mnt/server/ ]; then
     mkdir /mnt/server/
 fi
@@ -247,7 +243,6 @@ chmod +x bedrock_server
 echo -e "Install Completed"
     create_config "mc_bedrock_vanilla"
     echo -e "\033[92mInstall Completed\e[0m"
-    clear
     display
     launchBedrockVanillaServer
     exit
