@@ -82,6 +82,7 @@ function launchJavaServer {
 
 function launchBedrockVanillaServer {
     echo -e "\033[92m● Starting Minecraft Bedrock Server...\e[0m"
+    echo -e "Currently the bedrock install script is broken/not updated. Please download the latest version of Bedrock vanilla from https://www.minecraft.net/en-us/download/server/bedrock "
     LD_LIBRARY_PATH=. ./bedrock_server
 }
 
