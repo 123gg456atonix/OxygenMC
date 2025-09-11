@@ -193,49 +193,34 @@ function install_purpur {
 }
 
 function install_bedrock {
-    #!/bin/bash
-    echo -e "\033[93m○ Downloading and Installing Required Softwares...\e[0m"
-    
-
-# Minecraft CDN Akamai blocks script user-agents
-RANDVERSION=$(echo $((1 + $RANDOM % 4000)))
-
-if [ -z "${BEDROCK_VERSION}" ] || [ "${BEDROCK_VERSION}" == "latest" ]; then
-    echo -e "\n Downloading latest Bedrock server"
-    curl -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.$RANDVERSION.212 Safari/537.36" -H "Accept-Language: en" -H "Accept-Encoding: gzip, deflate" -o versions.html.gz https://www.minecraft.net/en-us/download/server/bedrock
-    DOWNLOAD_URL=$(zgrep -o 'https://www.minecraft.net/bedrockdedicatedserver/bin-linux/[^"]*' versions.html.gz)
-else 
-    echo -e "\n Downloading ${BEDROCK_VERSION} Bedrock server"
-    DOWNLOAD_URL=https://www.minecraft.net/bedrockdedicatedserver/bin-linux/bedrock-server-$BEDROCK_VERSION.zip
-fi
-
-DOWNLOAD_FILE=$(echo ${DOWNLOAD_URL} | cut -d"/" -f5) # Retrieve archive name
-
-echo -e "backing up config files"
-rm *.bak versions.html.gz
-cp server.properties server.properties.bak
-cp permissions.json permissions.json.bak
-cp allowlist.json allowlist.json.bak
-
-
-echo -e "Downloading files from: $DOWNLOAD_URL"
-
-curl -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.$RANDVERSION.212 Safari/537.36" -H "Accept-Language: en" -o $DOWNLOAD_FILE $DOWNLOAD_URL
-
-echo -e "Unpacking server files"
-unzip -o $DOWNLOAD_FILE
-
-echo -e "Cleaning up after installing"
-rm $DOWNLOAD_FILE
-
-echo -e "restoring backup config files - on first install there will be file not found errors which you can ignore."
-cp -rf server.properties.bak server.properties
-cp -rf permissions.json.bak permissions.json
-cp -rf allowlist.json.bak allowlist.json
-
-chmod +x bedrock_server
-
-echo -e "Install Completed"
+       # Minecraft CDN Akamai blocks script user-agents
+    RANDVERSION=$(echo $((1 + $RANDOM % 4000)))
+    if [ -z "${BEDROCK_VERSION}" ] || [ "${BEDROCK_VERSION}" == "latest" ]; then
+        echo -e "\n Downloading latest Bedrock Server"
+        curl -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.$RANDVERSION.212 Safari/537.36" -H "Accept-Language: en" -H "Accept-Encoding: gzip, deflate" -o versions.html.gz https://www.minecraft.net/en-us/download/server/bedrock
+        DOWNLOAD_URL=$(zgrep -o 'https://www.minecraft.net/bedrockdedicatedserver/bin-linux/[^"]*' versions.html.gz)
+    else
+        echo -e "\n Downloading ${BEDROCK_VERSION} Bedrock Server"
+        DOWNLOAD_URL=https://www.minecraft.net/bedrockdedicatedserver/bin-linux/bedrock-server-$BEDROCK_VERSION.zip
+    fi
+    DOWNLOAD_FILE=$(echo ${DOWNLOAD_URL} | cut -d"/" -f5) # Retrieve archive name
+    #echo -e "backing up config files"
+    rm -rf *.bak versions.html.gz
+    echo -e "\033[93m○ Installing Vanilla Bedrock Server"
+    curl -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.$RANDVERSION.212 Safari/537.36" -H "Accept-Language: en" -o $DOWNLOAD_FILE $DOWNLOAD_URL
+    echo -e "Unpacking server files"
+    unzip -o $DOWNLOAD_FILE
+    echo -e "\033[93m○ Cleaning up after installing\e[0m"
+    rm $DOWNLOAD_FILE
+    echo -e "\033[93m○ Restoring backup config files - on first install there will be file not found errors which you can ignore.\e[0m"
+    cp -rf server.properties.bak server.properties
+    cp -rf permissions.json.bak permissions.json
+    cp -rf allowlist.json.bak allowlist.json
+    sed -i "s|^server-port=.*|server-port="$SERVER_PORT"|g" server.properties
+    sed -i "s|^server-name=.*|server-name="Join WraithNodes For Free Server discord.gg/wraithnodes"|g" server.properties
+    rm -rf *.bak
+    rm -rf *.txt
+    chmod +x bedrock_server
     create_config "mc_bedrock_vanilla"
     echo -e "\033[92mInstall Completed\e[0m"
     display
