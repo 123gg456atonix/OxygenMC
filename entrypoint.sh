@@ -82,7 +82,7 @@ function launchJavaServer {
 
 function launchBedrockVanillaServer {
     echo -e "\033[92m● Starting Minecraft Bedrock Server...\e[0m"
-    echo -e "Currently the bedrock install script is broken/not updated. Please download the latest version of Bedrock vanilla from https://www.minecraft.net/en-us/download/server/bedrock "
+    echo -e "Currently the bedrock install script is broken/not updated. If files not downloaded Please download the latest version of Bedrock vanilla from https://www.minecraft.net/en-us/download/server/bedrock "
     LD_LIBRARY_PATH=. ./bedrock_server
 }
 
@@ -204,10 +204,11 @@ function install_bedrock {
         DOWNLOAD_URL=$(zgrep -o 'https://www.minecraft.net/bedrockdedicatedserver/bin-linux/[^"]*' versions.html.gz)
     else
         echo -e "\n Downloading ${BEDROCK_VERSION} Bedrock Server"
-        DOWNLOAD_URL=https://www.minecraft.net/bedrockdedicatedserver/bin-linux/bedrock-server-$BEDROCK_VERSION.zip
+        DOWNLOAD_URL=https://www.minecraft.net/bedrockdedicatedserver/bin-linux/bedrock-server-1.21.102.1.zip
     fi
     DOWNLOAD_FILE=$(echo ${DOWNLOAD_URL} | cut -d"/" -f5) # Retrieve archive name
     #echo -e "backing up config files"
+    
     rm -rf *.bak versions.html.gz
     echo -e "\033[93m○ Installing Vanilla Bedrock Server"
     curl -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.$RANDVERSION.212 Safari/537.36" -H "Accept-Language: en" -o $DOWNLOAD_FILE $DOWNLOAD_URL
