@@ -14,14 +14,14 @@
 <!-- Introduction -->
 <br/><h2 align="center">🧩 Introduction</h2>
 
-**OxygenMC** is a multiegg designed to simply server management for hosting providers. Currently, it only supports Minecraft.
+**OxygenMC** is a multi-egg designed to simplify server management for hosting providers. Currently, it only supports Minecraft.
 
 **OxygenMC** also comes with features like:
 - **MOTD Blocking**: Prevents changes to MOTD.
 - **More Features**: Additional features to enhance server management.
 
 > [!NOTE]  
-> Disabling theses features require modifying the `entrypoint.sh` file. Do not modify this file unless you know what are you doing.
+> Disabling theses features require modifying the `entrypoint.sh` file. Do not modify this file unless you know what you are doing.
 
 [Learn more about **OxygenMC**](https://discord.gg/yJScqZsQgV).
 
@@ -37,23 +37,23 @@ As there are images that cannot fit inside this README, they are collapsible.
 </details>
 
 <h2 align="center">📛 How to use?</h2>
-You can either download the egg file directly from [**here**](https://github.com/123gg456atonix/OxygenMC/blob/main/egg-oxygenmc.json) or Build the egg and customize it with your preferences.
-
+You can either download the egg file directly from **Here** or build the egg and customize it with your preferences.
+<br></br>
 > [!NOTE]
-> Your should have basic knowledge of how docker works and how do make images.
+> Your should have basic knowledge of how Docker works and how do make images.
 
 1. Clone the repository
 ```bash
 git clone github.com/123gg456atonix/OxygenMC.git
 ```
-2. Edit the `entrypoint.sh` and any custom jar or gameserver of your prefrence and add it in the *main_menu* function.
-3. After editing, Upload everything to either github or your own KVM or VPS.
+2. Edit the `entrypoint.sh` and any custom jar or gameserver of your preference and add it in the *main_menu* function.
+3. After editing, upload everything to either GitHub or your own KVM or VPS.
 4. Install docker in your server
 ```bash
 curl -sSL https://get.docker.com/ | CHANNEL=stable bash
 ```
 5. **!! UPDATE `.github/workflows/docker-publish.yml` !!**
-6. Go to the dir where you uploaded the files and run
+6. Go to the directory where you uploaded the files and run
 ```bash
 docker build -t <image-name>:<tag> .
 ```
