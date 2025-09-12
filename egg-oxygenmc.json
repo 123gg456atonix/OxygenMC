@@ -35,7 +35,7 @@
             "default_value": "21",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|numeric|max:5",
+            "rules": "required|numeric|max:24|min:8",
             "field_type": "text"
         }
     ]
