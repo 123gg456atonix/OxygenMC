@@ -51,10 +51,10 @@ function online_mode {
     echo -e "\e[36m○ Do you want to enable online mode? (true/false):\e[0m"
     read true_false
     true_false=$(echo "$true_false" | tr '[:upper:]' '[:lower:]') # Convert to lowercase
-    if [ "$true_false" == *true* ]; then
+    if [ "$true_false" == "true" ]; then
         sed -i "s|^online-mode=.*|online-mode=true|g" server.properties
         echo -e "\033[92m● Online Mode Enabled\e[0m"
-    elif [ "$true_false" == *false* ]; then
+    elif [ "$true_false" == "false" ]; then
         sed -i "s|^online-mode=.*|online-mode=false|g" server.properties
         echo -e "\033[92m● Online Mode Disabled\e[0m"
     else
@@ -108,6 +108,7 @@ function launchBedrockVanillaServer {
 ####################################
 
 function install_java {
+    echo -e "\033[93m○ Installing/Checking Java version $JAVA_VERSION...\e[0m"
     if [ -z "$JAVA_VERSION" ]; then
         echo -e "\e[31m● Please specify the desired Java version using the JAVA_VERSION environment variable.\e[0m"
         exit 1
@@ -321,7 +322,7 @@ function minecraft_menu {
         echo -e "\e[32m2) Paper  \e[90m(1.21.8 - 1.8.8)\e[0m"
         echo -e "\e[32m3) Purpur \e[90m(1.21.8 - 1.14.1)\e[0m"
         echo -e "\e[32m4) Fabric  \e[90m(1.21.8 - 1.14)\e[0m"
-        echo -e "\e[31m5) Forge  \e[90m(1.21.8 - 1.6.2)\e[0m"
+        echo -e "\e[32m5) Forge  \e[90m(1.21.8 - 1.6.2)\e[0m"
         echo -e "\e[31m6) Back\e[0m"
 
         read mcsoft
