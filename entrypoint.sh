@@ -253,8 +253,10 @@ function install_fabric {
 
 function install_forge {
     echo -e "\033[93m○ Downloading Forge Server...\e[0m"
-    jar_url=$(curl --silent --request GET --header 'Authorization: 6d8c118f50aad5ef0362060dc526e49b5247cc1bd89272c0c5b3512cd0fbcad8' --url "https://versions.mcjars.app/api/v2/builds/FORGE/$forge" | jq -r '.builds[0].jarUrl')
-    curl -o server.jar "$jar_url"
+    jar_url=$(curl --silent --request GET --header 'Authorization: 6d8c118f50aad5ef0362060dc526e49b5247cc1bd89272c0c5b3512cd0fbcad8' --url "https://versions.mcjars.app/api/v2/builds/FORGE/$forge" | jq -r '.builds[0].zipUrl')
+    curl -o server.jar.zip "$jar_url"
+    unzip -o server.jar.zip
+    rm -f server.jar.zip
     create_config "mc_java_forge"
     port_assign
     echo -e "\033[92m● Installation Completed!\e[0m"
