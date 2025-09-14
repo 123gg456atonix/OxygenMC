@@ -1,20 +1,40 @@
 #!/bin/bash
-
-ARCH=$([[ "$(uname -m)" == "x86_64" ]] && printf "amd64" || printf "arm64")
+# Entry point script for OxygenMC Minecraft server management
 
 function display {
     echo -e "\e[31m
- ▒█████  ▒██   ██▒▓██   ██▓  ▄████ ▓█████  ███▄    █  ███▄ ▄███▓ ▄████▄  
-▒██▒  ██▒▒▒ █ █ ▒░ ▒██  ██▒ ██▒ ▀█▒▓█   ▀  ██ ▀█   █ ▓██▒▀█▀ ██▒▒██▀ ▀█  
-▒██░  ██▒░░  █   ░  ▒██ ██░▒██░▄▄▄░▒███   ▓██  ▀█ ██▒▓██    ▓██░▒▓█    ▄ 
+ ▒█████  ▒██   ██▒▓██   ██▓  ▄████ ▓█████  ███▄    █  ███▄ ▄███▓ ▄████▄
+▒██▒  ██▒▒▒ █ █ ▒░ ▒██  ██▒ ██▒ ▀█▒▓█   ▀  ██ ▀█   █ ▓██▒▀█▀ ██▒▒██▀ ▀█
+▒██░  ██▒░░  █   ░  ▒██ ██░▒██░▄▄▄░▒███   ▓██  ▀█ ██▒▓██    ▓██░▒▓█    ▄
 ▒██   ██░ ░ █ █ ▒   ░ ▐██▓░░▓█  ██▓▒▓█  ▄ ▓██▒  ▐▌██▒▒██    ▒██ ▒▓▓▄ ▄██▒
 ░ ████▓▒░▒██▒ ▒██▒  ░ ██▒▓░░▒▓███▀▒░▒████▒▒██░   ▓██░▒██▒   ░██▒▒ ▓███▀ ░
 ░ ▒░▒░▒░ ▒▒ ░ ░▓ ░   ██▒▒▒  ░▒   ▒ ░░ ▒░ ░░ ▒░   ▒ ▒ ░ ▒░   ░  ░░ ░▒ ▒  ░
-  ░ ▒ ▒░ ░░   ░▒ ░ ▓██ ░▒░   ░   ░  ░ ░  ░░ ░░   ░ ▒░░  ░      ░  ░  ▒   
-░ ░ ░ ▒   ░    ░   ▒ ▒ ░░  ░ ░   ░    ░      ░   ░ ░ ░      ░   ░        
-    ░ ░   ░    ░   ░ ░           ░    ░  ░         ░        ░   ░ ░      
-                   ░ ░                                          ░        
+  ░ ▒ ▒░ ░░   ░▒ ░ ▓██ ░▒░   ░   ░  ░ ░  ░░ ░░   ░ ▒░░  ░      ░  ░  ▒
+░ ░ ░ ▒   ░    ░   ▒ ▒ ░░  ░ ░   ░    ░      ░   ░ ░ ░      ░   ░
+    ░ ░   ░    ░   ░ ░           ░    ░  ░         ░        ░   ░ ░
+                   ░ ░                                          ░
 \e[0m"
+}
+
+function sysinfo {
+    ARCH=$([[ "$(uname -m)" == "x86_64" ]] && printf "amd64" || printf "arm64")
+    CPU_MODEL=$(lscpu | grep 'Model name' | cut -d: -f2 | xargs)
+    CPU_CORES=$(lscpu | grep '^CPU(s):' | awk '{print $2}')
+    RAM_TOTAL=$(free -h | grep '^Mem:' | awk '{print $2}')
+    OS_INFO=$(uname -s -r)
+    HOSTNAME=$(hostname)
+    DISK_FREE=$(df -h / | tail -1 | awk '{print $4}')
+    UPTIME=$(uptime -p)
+    echo -e "\e[36m● System Information:\e[0m"
+    echo -e "\e[32m○ Architecture: \e[0m$ARCH"
+    echo -e "\e[32m○ CPU Model: \e[0m$CPU_MODEL"
+    echo -e "\e[32m○ CPU Cores: \e[0m$CPU_CORES"
+    echo -e "\e[32m○ Total RAM: \e[0m$RAM_TOTAL"
+    echo -e "\e[32m○ OS Info: \e[0m$OS_INFO"
+    echo -e "\e[32m○ Hostname: \e[0m$HOSTNAME"
+    echo -e "\e[32m○ Disk Free: \e[0m$DISK_FREE"
+    echo -e "\e[32m○ Uptime: \e[0m$UPTIME"
+    echo ""
 }
 
 function unix_args {
@@ -288,6 +308,19 @@ function install_bungee {
     exit
 }
 
+function install_velocity {
+    echo -e "\033[93m○ Downloading Velocity Server...\e[0m"
+        jar_url=$(curl --silent --request GET --header 'Authorization: 6d8c118f50aad5ef0362060dc526e49b5247cc1bd89272c0c5b3512cd0fbcad8' --url "https://versions.mcjars.app/api/v2/builds/VELOCITY/$velocity" | jq -r '.builds[0].jarUrl')
+    curl -o server.jar "$jar_url"
+    create_config "mc_proxy_velocity"
+    echo -e "\033[92m● Installation Completed!\e[0m"
+    install_java
+    clear
+    display
+    launchProxyServer
+    exit
+}
+
 function install_bedrock {
     #!/bin/bash
     echo -e "\033[93m○ Downloading and Installing Required Softwares...\e[0m"
@@ -340,6 +373,7 @@ function minecraft_menu {
     while true; do
         clear
         display
+        sysinfo
         echo -e "\e[36m● Select your Java server:\e[0m"
         echo -e "\e[32m1) Vanilla  \e[90m(1.21.8 - 1.2.5)\e[0m"
         echo -e "\e[32m2) Paper  \e[90m(1.21.8 - 1.8.8)\e[0m"
@@ -448,6 +482,7 @@ function bedrock_menu {
     while true; do
         clear
         display
+        sysinfo
         echo -e "\e[36m● Select your Bedrock server:\e[0m"
         echo -e "\e[32m1) Vanilla Bedrock\e[0m"
         echo -e "\e[31m2) Back\e[0m"
@@ -472,9 +507,11 @@ function ProxyMenu {
         while true; do
         clear
         display
+        sysinfo
         echo -e "\e[36m● Select your Proxy server:\e[0m"
         echo -e "\e[32m1) Bungeecord\e[0m"
-        echo -e "\e[31m2) Back\e[0m"
+        echo -e "\e[32m2) Velocity\e[0m"
+        echo -e "\e[31m3) Back\e[0m"
 
         read pssoft
 
@@ -496,9 +533,29 @@ function ProxyMenu {
                echo -e "\e[31m● The specified version is either invalid or deprecated.\e[0m"
             fi
             ;;
+
         2)
+            clear
+            display
+            echo -e "\e[36m● Select the Velocity version you want to use:\e[0m"
+            echo -e "\e[32m→ 3.4.0-SNAPSHOT, 3.3.0-SNAPSHOT, 3.2.0-SNAPSHOT, 1.1.9, 1.0.10, 3.1.2-SNAPSHOT, 3.1.1, 3.1.1-SNAPSHOT, 3.1.0\e[0m"
+            read -r input_version
+            valid_versions="3.4.0-SNAPSHOT 3.3.0-SNAPSHOT 3.2.0-SNAPSHOT 1.1.9 1.0.10 3.1.2-SNAPSHOT 3.1.1 3.1.1-SNAPSHOT 3.1.0"
+
+            # Check if the input version is in the list of valid versions
+            if [[ $valid_versions =~ (^|[[:space:]])$input_version($|[[:space:]]) ]]; then
+                velocity="$input_version"
+                prompt_eula_mc
+                install_velocity
+            else
+               echo -e "\e[31m● The specified version is either invalid or deprecated.\e[0m"
+            fi
+            ;;
+
+        3)
             break
             ;;
+
         *)
             echo -e "\e[31m● Invalid choice. Please try again.\e[0m"
             ;;
@@ -516,24 +573,28 @@ function check_config {
             mc_bedrock_vanilla)
                 clear
                 display
+                sysinfo
                 launchBedrockVanillaServer
                 exit
                 ;;
             mc_java_vanilla)
                 clear
                 display
+                sysinfo
                 launchVanillaServer
                 exit
                 ;;
-            mc_proxy_cord)
+            mc_proxy_cord | mc_proxy_velocity)
                 clear
                 display
+                sysinfo
                 launchProxyServer
                 exit
                 ;;
             mc_java | mc_java_paper | mc_java_purpur | mc_java_fabric | mc_java_forge)
                 clear
                 display
+                sysinfo
                 case "$type" in
                 mc_java | mc_java_paper | mc_java_purpur | mc_java_fabric | mc_java_forge)
                     launchJavaServer
@@ -582,3 +643,4 @@ function main {
 }
 
 main
+sysinfo
