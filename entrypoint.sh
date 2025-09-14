@@ -103,6 +103,13 @@ function launchBedrockVanillaServer {
     LD_LIBRARY_PATH=. ./bedrock_server
 }
 
+function launchProxyServer {
+    echo -e "\033[93mo Checking is Java is up to date...\e[0m"
+    install_java
+    echo -e "\033[92m● Starting Minecraft Proxy Server...\e[0m"
+    java -Xms128M -jar server.jar
+}
+
 ####################################
 #          Install Functions       #
 ####################################
@@ -268,6 +275,19 @@ function install_forge {
     exit
 }
 
+function install_bungee {
+    echo -e "\033[93m○ Downloading Bungeecord Server...\e[0m"
+        jar_url=$(curl --silent --request GET --header 'Authorization: 6d8c118f50aad5ef0362060dc526e49b5247cc1bd89272c0c5b3512cd0fbcad8' --url "https://versions.mcjars.app/api/v2/builds/BUNGEECORD/$cord" | jq -r '.builds[0].jarUrl')
+    curl -o server.jar "$jar_url"
+    create_config "mc_proxy_cord"
+    echo -e "\033[92m● Installation Completed!\e[0m"
+    install_java
+    clear
+    display
+    launchProxyServer
+    exit
+}
+
 function install_bedrock {
     #!/bin/bash
     echo -e "\033[93m○ Downloading and Installing Required Softwares...\e[0m"
@@ -312,7 +332,8 @@ function main_menu {
     echo -e "\e[36m● Select the server type:\e[0m"
     echo -e "\e[32m1) Minecraft Java\e[0m"
     echo -e "\e[32m2) Minecraft Bedrock\e[0m"
-    echo -e "\e[31m3) Exit"
+    echo -e "\e[32m3) Minecraft Proxy\e[0m"
+    echo -e "\e[31m4) Exit"
 }
 
 function minecraft_menu {
@@ -447,6 +468,42 @@ function bedrock_menu {
     done
 }
 
+function ProxyMenu {
+        while true; do
+        clear
+        display
+        echo -e "\e[36m● Select your Proxy server:\e[0m"
+        echo -e "\e[32m1) Bungeecord\e[0m"
+        echo -e "\e[31m2) Back\e[0m"
+
+        read pssoft
+
+        case $pssoft in
+        1)
+            clear
+            display
+            echo -e "\e[36m● Select the Bungeecord version you want to use:\e[0m"
+            echo -e "\e[32m→ 1.21, 1.20, 1.19, 1.18, 1.17, 1.16, 1.15, 1.14, 1.13, 1.12, 1.11, 1.10, 1.9, 1.8, 1.7, 1.6.4, 1.6.2, 1.6.1, 1.5, 1.4.7, 1.0 [0m"
+            read -r input_version
+            valid_versions="1.21 1.20 1.19 1.18 1.17 1.16 1.15 1.14 1.13 1.12 1.11 1.10 1.9 1.8 1.7 1.6.4 1.6.2 1.6.1 1.5 1.4.7 1.0"
+
+            # Check if the input version is in the list of valid versions
+            if [[ $valid_versions =~ (^|[[:space:]])$input_version($|[[:space:]]) ]]; then
+                cord="$input_version"
+                prompt_eula_mc
+                install_bungee
+            else
+               echo -e "\e[31m● The specified version is either invalid or deprecated.\e[0m"
+            fi
+            ;;
+        *)
+            echo -e "\e[31m● Invalid choice. Please try again.\e[0m"
+            ;;
+        esac
+    done
+
+}
+
 function check_config {
     if [ -e "OxygenMC.yml" ]; then
         type=$(grep -A3 'type:' OxygenMC.yml | tail -n1 | awk '{ print $2}')
@@ -463,6 +520,12 @@ function check_config {
                 clear
                 display
                 launchVanillaServer
+                exit
+                ;;
+            mc_proxy_cord)
+                clear
+                display
+                launchProxyServer
                 exit
                 ;;
             mc_java | mc_java_paper | mc_java_purpur | mc_java_fabric | mc_java_forge)
@@ -503,6 +566,9 @@ function main {
             bedrock_menu
             ;;
         3)
+            ProxyMenu
+            ;;
+        4)
             exit 0
             ;;
         *)
