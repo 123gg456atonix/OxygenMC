@@ -47,17 +47,34 @@ function prompt_eula_mc {
     fi
 }
 
+function online_mode {
+    echo -e "\e[36m○ Do you want to enable online mode? (true/false):\e[0m"
+    read true_false
+    true_false=$(echo "$true_false" | tr '[:upper:]' '[:lower:]') # Convert to lowercase
+    if [ "$true_false" == "true" ]; then
+        sed -i "s|^online-mode=.*|online-mode=true|g" server.properties
+        echo -e "\033[92m● Online Mode Enabled\e[0m"
+    elif [ "$true_false" == "false" ]; then
+        sed -i "s|^online-mode=.*|online-mode=false|g" server.properties
+        echo -e "\033[92m● Online Mode Disabled\e[0m"
+    else
+        echo -e "\e[31m● ONLINE_MODE variable is not set to true or false. Please set it correctly.\e[0m"
+        exit 1
+    fi
+}
+
 function port_assign {
     cat <<EOF >server.properties
-motd=            \u00A7l☲ \u00A7lᴏ\u00A7lx\u00A7lʏ\u00A7lɢ\u00A7lᴇ\u00A7lɴ \u00A7lᴍ\u00A7lᴄ \u00A7l☲ \u00A7l- \u00A7l1\u00A7l2\u00A7l3\u00A7lg\u00A7lg\u00A7l4\u00A7l5\u00A7l6\u00A7r\n    \u00A7lJ\u00A7lᴏ\u00A7lɪ\u00A7lɴ \u00A7ld\u00A7li\u00A7ls\u00A7lc\u00A7lo\u00A7lr\u00A7ld\u00A7l.\u00A7lg\u00A7lg\u00A7l/\u00A7ly\u00A7lJ\u00A7lS\u00A7lc\u00A7lq\u00A7lZ\u00A7ls\u00A7lQ\u00A7lg\u00A7lV \u00A7lꜰ\u00A7lᴏ\u00A7lʀ \u00A7lᴍ\u00A7lᴏ\u00A7lʀ\u00A7lᴇ \u00A7lɪ\u00A7lɴ\u00A7lꜰ\u00A7lᴏ
+motd=§x§5§4§D§A§F§4§l☲ §x§5§4§C§F§E§F§lᴏ§x§5§4§C§A§E§C§lx§x§5§4§C§4§E§9§lʏ§x§5§4§B§F§E§7§lɢ§x§5§4§B§A§E§4§lᴇ§x§5§4§B§4§E§1§lɴ §x§5§4§A§9§D§C§lᴍ§x§5§4§A§4§D§9§lᴄ §x§5§4§9§9§D§4§l☲ §x§5§4§8§F§C§E§l- §x§5§4§8§4§C§9§l1§x§5§4§7§E§C§6§l2§x§5§4§7§9§C§3§l3§x§5§4§7§4§C§1§lg§x§5§4§6§E§B§E§lg§x§5§4§6§9§B§B§l4§x§5§4§6§3§B§9§l5§x§5§4§5§E§B§6§l6\n§x§5§4§D§A§F§4§lʜ§x§5§4§D§6§F§2§lᴛ§x§5§4§D§1§F§0§lᴛ§x§5§4§C§D§E§D§lᴘ§x§5§4§C§8§E§B§ls§x§5§4§C§4§E§9§l:§x§5§4§B§F§E§7§l/§x§5§4§B§B§E§5§l/§x§5§4§B§7§E§2§lᴏ§x§5§4§B§2§E§0§lx§x§5§4§A§E§D§E§lʏ§x§5§4§A§9§D§C§lɢ§x§5§4§A§5§D§9§lᴇ§x§5§4§A§0§D§7§lɴ§x§5§4§9§C§D§5§lᴍ§x§5§4§9§8§D§3§lᴄ§x§5§4§9§3§D§1§l.§x§5§4§8§F§C§E§l1§x§5§4§8§A§C§C§l2§x§5§4§8§6§C§A§l3§x§5§4§8§1§C§8§lɢ§x§5§4§7§D§C§6§lɢ§x§5§4§7§9§C§3§l4§x§5§4§7§4§C§1§l5§x§5§4§7§0§B§F§l6§x§5§4§6§B§B§D§l.§x§5§4§6§7§B§A§lᴄ§x§5§4§6§2§B§8§lᴏ§x§5§4§5§E§B§6§lᴍ
 server-port=$SERVER_PORT
 query.port=$SERVER_PORT
+server-ip=0.0.0.0
 EOF
 }
 
 
 function forced_motd {
-    sed -i "s|^motd=.*|motd=            \u00A7l☲ \u00A7lᴏ\u00A7lx\u00A7lʏ\u00A7lɢ\u00A7lᴇ\u00A7lɴ \u00A7lᴍ\u00A7lᴄ \u00A7l☲ \u00A7l- \u00A7l1\u00A7l2\u00A7l3\u00A7lg\u00A7lg\u00A7l4\u00A7l5\u00A7l6\u00A7r\n    \u00A7lJ\u00A7lᴏ\u00A7lɪ\u00A7lɴ \u00A7ld\u00A7li\u00A7ls\u00A7lc\u00A7lo\u00A7lr\u00A7ld\u00A7l.\u00A7lg\u00A7lg\u00A7l/\u00A7ly\u00A7lJ\u00A7lS\u00A7lc\u00A7lq\u00A7lZ\u00A7ls\u00A7lQ\u00A7lg\u00A7lV \u00A7lꜰ\u00A7lᴏ\u00A7lʀ \u00A7lᴍ\u00A7lᴏ\u00A7lʀ\u00A7lᴇ \u00A7lɪ\u00A7lɴ\u00A7lꜰ\u00A7lᴏ|g" server.properties
+    sed -i "s|^motd=.*|motd=§x§5§4§D§A§F§4§l☲ §x§5§4§C§F§E§F§lᴏ§x§5§4§C§A§E§C§lx§x§5§4§C§4§E§9§lʏ§x§5§4§B§F§E§7§lɢ§x§5§4§B§A§E§4§lᴇ§x§5§4§B§4§E§1§lɴ §x§5§4§A§9§D§C§lᴍ§x§5§4§A§4§D§9§lᴄ §x§5§4§9§9§D§4§l☲ §x§5§4§8§F§C§E§l- §x§5§4§8§4§C§9§l1§x§5§4§7§E§C§6§l2§x§5§4§7§9§C§3§l3§x§5§4§7§4§C§1§lg§x§5§4§6§E§B§E§lg§x§5§4§6§9§B§B§l4§x§5§4§6§3§B§9§l5§x§5§4§5§E§B§6§l6\n§x§5§4§D§A§F§4§lʜ§x§5§4§D§6§F§2§lᴛ§x§5§4§D§1§F§0§lᴛ§x§5§4§C§D§E§D§lᴘ§x§5§4§C§8§E§B§ls§x§5§4§C§4§E§9§l:§x§5§4§B§F§E§7§l/§x§5§4§B§B§E§5§l/§x§5§4§B§7§E§2§lᴏ§x§5§4§B§2§E§0§lx§x§5§4§A§E§D§E§lʏ§x§5§4§A§9§D§C§lɢ§x§5§4§A§5§D§9§lᴇ§x§5§4§A§0§D§7§lɴ§x§5§4§9§C§D§5§lᴍ§x§5§4§9§8§D§3§lᴄ§x§5§4§9§3§D§1§l.§x§5§4§8§F§C§E§l1§x§5§4§8§A§C§C§l2§x§5§4§8§6§C§A§l3§x§5§4§8§1§C§8§lɢ§x§5§4§7§D§C§6§lɢ§x§5§4§7§9§C§3§l4§x§5§4§7§4§C§1§l5§x§5§4§7§0§B§F§l6§x§5§4§6§B§B§D§l.§x§5§4§6§7§B§A§lᴄ§x§5§4§6§2§B§8§lᴏ§x§5§4§5§E§B§6§lᴍ|g" server.properties
 }
 
 ####################################
@@ -91,6 +108,7 @@ function launchBedrockVanillaServer {
 ####################################
 
 function install_java {
+    echo -e "\033[93m○ Installing/Checking Java version $JAVA_VERSION...\e[0m"
     if [ -z "$JAVA_VERSION" ]; then
         echo -e "\e[31m● Please specify the desired Java version using the JAVA_VERSION environment variable.\e[0m"
         exit 1
@@ -141,15 +159,35 @@ function install_java {
     export JAVA_HOME="$HOME/.sdkman/candidates/java/$JAVA_VERSION_S"
     export PATH="$JAVA_HOME/bin:$PATH"
 }
-# This is optional turn on if you want.
 
-# function optimize_server {
-#     if [ ! -d "$HOME/plugins" ]; then
-#         mkdir -p $HOME/plugins
-#     fi
-#     echo -e "\033[93m○ Optimizing Server...\e[0m"
-#     curl -o $HOME/plugins/Hibernate.jar https://raw.githubusercontent.com/divyamboii/BetterJavaEggs/refs/heads/main/Hibernate.jar
-# }
+function optimize_server {
+    echo -e "\033[93m○ Do you want to optimize the server? (y/n)\e[0m"
+    read optimize_input
+    optimize_input=$(echo "$optimize_input" | tr '[:upper:]' '[:lower:]') # Convert to lowercase
+    if [[ "$optimize_input" == *y* || "$optimize_input" == *yes* ]]; then
+        echo -e "\033[93m○ Optimizing server...\e[0m"
+        if [ ! -f "server.properties" ]; then
+            echo -e "\e[31m● server.properties file not found. Cannot optimize.\e[0m"
+            return
+        fi
+        sed -i "s|^view-distance=.*|view-distance=6|g" server.properties
+        sed -i "s|^max-tick-time=.*|max-tick-time=60000|g" server.properties
+        sed -i "s|^entity-activation-range=.*|entity-activation-range=32|g" server.properties
+        sed -i "s|^tick-inactive-villagers=.*|tick-inactive-villagers=false|g" server.properties
+        sed -i "s|^max-players=.*|max-players=10|g" server.properties
+        if [ ! -d "$HOME/plugins" ]; then
+        mkdir -p $HOME/plugins
+        echo -e "\033[93m○ Adding Hibernate.jar...\e[0m"
+        curl -o $HOME/plugins/Hibernate.jar https://raw.githubusercontent.com/123gg456atonix/OxygenMC/refs/heads/main/public/Hibernate.jar
+        else 
+        echo -e "\033[93m○ Adding Hibernate.jar...\e[0m"
+        curl -o $HOME/plugins/Hibernate.jar https://raw.githubusercontent.com/123gg456atonix/OxygenMC/refs/heads/main/public/Hibernate.jar
+        fi
+        echo -e "\033[92m● Server optimized successfully.\e[0m"
+    else
+        echo -e "\033[93m○ Skipping optimization.\e[0m"
+    fi
+}
 
 function install_vanilla {
     echo -e "\033[93m○ Downloading Vanilla Server...\e[0m"
@@ -161,6 +199,7 @@ function install_vanilla {
     install_java
     clear
     display
+    online_mode
     launchVanillaServer
     exit
 }
@@ -175,6 +214,8 @@ function install_paper {
     install_java
     clear
     display
+    optimize_server
+    online_mode
     launchJavaServer
     exit
 }
@@ -189,6 +230,40 @@ function install_purpur {
     install_java
     clear
     display
+    optimize_server
+    online_mode
+    launchJavaServer
+    exit
+}
+
+function install_fabric {
+    echo -e "\033[93m○ Downloading Fabric Server...\e[0m"
+    jar_url=$(curl --silent --request GET --header 'Authorization: 6d8c118f50aad5ef0362060dc526e49b5247cc1bd89272c0c5b3512cd0fbcad8' --url "https://versions.mcjars.app/api/v2/builds/FABRIC/$fabric" | jq -r '.builds[0].jarUrl')
+    curl -o server.jar "$jar_url"
+    create_config "mc_java_fabric"
+    port_assign
+    echo -e "\033[92m● Installation Completed!\e[0m"
+    install_java
+    clear
+    display
+    online_mode
+    launchJavaServer
+    exit
+}
+
+function install_forge {
+    echo -e "\033[93m○ Downloading Forge Server...\e[0m"
+    jar_url=$(curl --silent --request GET --header 'Authorization: 6d8c118f50aad5ef0362060dc526e49b5247cc1bd89272c0c5b3512cd0fbcad8' --url "https://versions.mcjars.app/api/v2/builds/FORGE/$forge" | jq -r '.builds[0].zipUrl')
+    curl -o server.jar.zip "$jar_url"
+    unzip -o server.jar.zip
+    rm -f server.jar.zip
+    create_config "mc_java_forge"
+    port_assign
+    echo -e "\033[92m● Installation Completed!\e[0m"
+    install_java
+    clear
+    display
+    online_mode
     launchJavaServer
     exit
 }
@@ -245,10 +320,12 @@ function minecraft_menu {
         clear
         display
         echo -e "\e[36m● Select your Java server:\e[0m"
-        echo -e "\e[32m1) Vanilla  \e[90m(1.18 - 1.21.3)\e[0m"
-        echo -e "\e[32m2) Paper  \e[90m(1.8.8 - 1.21.1)\e[0m"
-        echo -e "\e[32m3) Purpur \e[90m(1.14.1 - 1.21.1)\e[0m"
-        echo -e "\e[31m4) Back\e[0m"
+        echo -e "\e[32m1) Vanilla  \e[90m(1.21.8 - 1.2.5)\e[0m"
+        echo -e "\e[32m2) Paper  \e[90m(1.21.8 - 1.8.8)\e[0m"
+        echo -e "\e[32m3) Purpur \e[90m(1.21.8 - 1.14.1)\e[0m"
+        echo -e "\e[32m4) Fabric  \e[90m(1.21.8 - 1.14)\e[0m"
+        echo -e "\e[32m5) Forge  \e[90m(1.21.8 - 1.6.2)\e[0m"
+        echo -e "\e[31m6) Back\e[0m"
 
         read mcsoft
 
@@ -257,9 +334,9 @@ function minecraft_menu {
             clear
             display
             echo -e "\e[36m● Select the Vanilla version you want to use:\e[0m"
-            echo -e "\e[32m→ 1.18, 1.18.1, 1.18.2, 1.19, 1.19.1, 1.19.2, 1.19.3, 1.19.4, 1.20, 1.20.1, 1.20.2, 1.20.4, 1.20.5, 1.20.6, 1.21, 1.21.1, 1.21.2, 1.21.3\e[0m"
+            echo -e "\e[32m→ 1.21.8 - 1.21 , 1.20.6 - 1.20, 1.19.4 - 1.19, 1.18.2 - 1.18, 1.17.1 - 1.17, 1.16.5 - 1.16, 1.15.2 - 1.15, 1.14.4 - 1.14, 1.13.2 - 1.13, 1.12.2 - 1.12, 1.11.2 - 1.11, 1.10.2 - 1.10, 1.9.4 - 1.9, 1.8.9 - 1.8, 1.7.10 - 1.7.2, 1.6.4, 1.6.2, 1.6.1, 1.5.2, 1.5.1, 1.4.7 - 1.4.4, 1.4.2, 1.3.2, 1.3.1, 1.2.5  \e[0m"
             read -r input_version
-            valid_versions="1.18 1.18.1 1.18.2 1.19 1.19.1 1.19.2 1.19.3 1.19.4 1.20 1.20.1 1.20.2 1.20.4 1.20.5 1.20.6 1.21 1.21.1 1.21.2 1.21.3"
+            valid_versions="1.21.8 1.21.7 1.21.6 1.21.5 1.21.4 1.21.3 1.21.2 1.21.1 1.21 1.20.6 1.20.5 1.20.4 1.20.3 1.20.2 1.20.1 1.20 1.19.4 1.19.3 1.19.2 1.19.1 1.19 1.18.2 1.18.1 1.18 1.17.1 1.17 1.16.5 1.16.4 1.16.3 1.16.2 1.16.1 1.16 1.15.2 1.15.1 1.15 1.14.4 1.14.3 1.14.2 1.14.1 1.14 1.13.2 1.13.1 1.13 1.12.2 1.12.1 1.12 1.11.2 1.11 1.10.2 1.10 1.9.4 1.9.3 1.9.2 1.9.1 1.9 1.8.9 1.8.8 1.8.7 1.8.6 1.8.5 1.8.4 1.8.3 1.8.2 1.8.1 1.8 1.7.10 1.7.9 1.7.8 1.7.7 1.7.6 1.7.5 1.7.4 1.7.3 1.7.2 1.6.4 1.6.2 1.6.1 1.5.2 1.5.1 1.4.7 1.4.6 1.4.5 1.4.4 1.4.2 1.3.2 1.3.1 1.2.5"
 
             # Check if the input version is in the list of valid versions
             if [[ $valid_versions =~ (^|[[:space:]])$input_version($|[[:space:]]) ]]; then
@@ -274,9 +351,9 @@ function minecraft_menu {
             clear
             display
             echo -e "\e[36m● Select the Paper version you want to use:\e[0m"
-            echo -e "\e[32m→ 1.8.8, 1.9.4, 1.10.2, 1.11.2, 1.12.2, 1.13.2, 1.14.4, 1.15.2, 1.16.5, 1.17, 1.17.1, 1.18, 1.18.1, 1.18.2, 1.19, 1.19.1, 1.19.2, 1.19.3, 1.19.4, 1.20, 1.20.1, 1.20.2, 1.20.4, 1.20.5, 1.20.6, 1.21, 1.21.1\e[0m"
+            echo -e "\e[32m→ 1.21.8, 1.21.7, 1.21.6, 1.21.5, 1.21.4, 1.21.3, 1.21.1, 1.21, 1.20.6, 1.20.5, 1.20.4, 1.20.2, 1.20.1, 1.20, 1.19.4, 1.19.3, 1.19.2, 1.19.1, 1.19, 1.18.2, 1.18.1, 1.18, 1.17.1, 1.17, 1.16.5, 1.16.4, 1.16.3, 1.16.2, 1.16.1, 1.15.2, 1.15.1, 1.15, 1.14.4, 1.14.3, 1.14.2, 1.14.1, 1.14, 1.13.2, 1.13.1, 1.13, 1.12.2, 1.12.1, 1.12, 1.11.2, 1.10.2, 1.9.4, 1.8.8, 1.7.10\e[0m"
             read -r input_version
-            valid_versions="1.8.8 1.9.4 1.10.2 1.11.2 1.12.2 1.13.2 1.14.4 1.15.2 1.16.5 1.17 1.17.1 1.18 1.18.1 1.18.2 1.19 1.19.1 1.19.2 1.19.3 1.19.4 1.20 1.20.1 1.20.2 1.20.4 1.20.5 1.20.6 1.21 1.21.1"
+            valid_versions="1.21.8 1.21.7 1.21.6 1.21.5 1.21.4 1.21.3 1.21.2 1.21.1 1.21 1.20.6 1.20.5 1.20.4 1.20.3 1.20.2 1.20.1 1.20 1.19.4 1.19.3 1.19.2 1.19.1 1.19 1.18.2 1.18.1 1.18 1.17.1 1.17 1.16.5 1.16.4 1.16.3 1.16.2 1.16.1 1.16 1.15.2 1.15.1 1.15 1.14.4 1.14.3 1.14.2 1.14.1 1.14 1.13.2 1.13.1 1.13 1.12.2 1.12.1 1.12 1.11.2 1.10.2 1.9.4 1.8.8 1.7.10"
 
             # Check if the input version is in the list of valid versions
             if [[ $valid_versions =~ (^|[[:space:]])$input_version($|[[:space:]]) ]]; then
@@ -291,9 +368,9 @@ function minecraft_menu {
             clear
             display
             echo -e "\e[36m● Select the Purpur version you want to use:\e[0m"
-            echo -e "\e[32m→ 1.14.1, 1.14.2, 1.14.3, 1.14.4, 1.15, 1.15.1, 1.15.2, 1.16.1, 1.16.2, 1.16.3, 1.16.4, 1.16.5, 1.17, 1.17.1, 1.18, 1.18.1, 1.18.2, 1.19, 1.19.1, 1.19.2, 1.19.3, 1.19.4, 1.20, 1.20.1, 1.20.2, 1.20.4, 1.20.6, 1.21, 1.21.1\e[0m"
+            echo -e "\e[32m→1.21.8, 1.21.7, 1.21.6, 1.21.5, 1.21.4, 1.21.3, 1.21.1, 1.21, 1.20.6, 1.20.4, 1.20.2, 1.20.1, 1.20, 1.19.4, 1.19.3, 1.19.2, 1.19.1, 1.19, 1.18.2, 1.18.1, 1.18, 1.17.1, 1.17, 1.16.5, 1.16.4, 1.16.3, 1.16.2, 1.16.1, 1.15.2, 1.15.1, 1.15, 1.14.4, 1.14.3, 1.14.2, 1.14.1\e[0m"
             read -r input_version
-            valid_versions="1.14.1 1.14.2 1.14.3 1.14.4 1.15 1.15.1 1.15.2 1.16.1 1.16.2 1.16.3 1.16.4 1.16.5 1.17 1.17.1 1.18 1.18.1 1.18.2 1.19 1.19.1 1.19.2 1.19.3 1.19.4 1.20 1.20.1 1.20.2 1.20.4 1.20.6 1.21 1.21.1"
+            valid_versions="1.21.8 1.21.7 1.21.6 1.21.5 1.21.4 1.21.3 1.21.2 1.21.1 1.21 1.20.6 1.20.5 1.20.4 1.20.3 1.20.2 1.20.1 1.20 1.19.4 1.19.3 1.19.2 1.19.1 1.19 1.18.2 1.18.1 1.18 1.17.1 1.17 1.16.5 1.16.4 1.16.3 1.16.2 1.16.1 1.16 1.15.2 1.15.1 1.15 1.14.4 1.14.3 1.14.2 1.14.1"
             if [[ $valid_versions =~ (^|[[:space:]])$input_version($|[[:space:]]) ]]; then
                 purpur="$input_version"
                 prompt_eula_mc
@@ -303,6 +380,40 @@ function minecraft_menu {
             fi
             ;;
         4)
+            clear
+            display
+            echo -e "\e[36m● Select the Fabric version you want to use:\e[0m"
+            echo -e "\e[32m→ 1.21.8 - 1.21 , 1.20.6 - 1.20, 1.19.4 - 1.19, 1.18.2 - 1.18, 1.17.1 - 1.17, 1.16.5 - 1.16, 1.15.2 - 1.15, 1.14.4 - 1.14\e[0m"
+            read -r input_version
+            valid_versions="1.21.8 1.21.7 1.21.6 1.21.5 1.21.4 1.21.3 1.21.2 1.21.1 1.21 1.20.6 1.20.5 1.20.4 1.20.3 1.20.2 1.20.1 1.20 1.19.4 1.19.3 1.19.2 1.19.1 1.19 1.18.2 1.18.1 1.18 1.17.1 1.17 1.16.5 1.16.4 1.16.3 1.16.2 1.16.1 1.16 1.15.2 1.15.1 1.15 1.14.4 1.14.3 1.14.2 1.14.1 1.14"
+
+            # Check if the input version is in the list of valid versions
+            if [[ $valid_versions =~ (^|[[:space:]])$input_version($|[[:space:]]) ]]; then
+                fabric="$input_version"
+                prompt_eula_mc
+                install_fabric
+            else
+               echo -e "\e[31m● The specified version is either invalid or deprecated.\e[0m"
+            fi
+            ;;
+        5)
+            clear
+            display
+            echo -e "\e[36m● Select the Forge version you want to use:\e[0m"
+            echo -e "\e[32m→ 1.21.8, 1.21.7, 1.21.6, 1.21.5, 1.21.4, 1.21.3, 1.21.1, 1.21, 1.20.6, 1.20.4, 1.20.2, 1.20.1, 1.20, 1.19.4, 1.19.3, 1.19.2, 1.19.1, 1.19, 1.18.2, 1.18.1, 1.18, 1.17.1, 1.16.5, 1.16.4, 1.16.3, 1.16.2, 1.16.1, 1.15.2, 1.15.1, 1.15, 1.14.4, 1.14.3, 1.14.2, 1.13.2, 1.12.2, 1.12.1, 1.12, 1.11.2, 1.11, 1.10.2, 1.10, 1.9.4, 1.9, 1.8.9, 1.8.8, 1.8, 1.7.10, 1.7.2, 1.6.4, 1.6.2\e[0m"
+            read -r input_version
+            valid_versions="1.21.8 1.21.7 1.21.6 1.21.5 1.21.4 1.21.3 1.21.1 1.21 1.20.6 1.20.4 1.20.2 1.20.1 1.20 1.19.4 1.19.3 1.19.2 1.19.1 1.19 1.18.2 1.18.1 1.18 1.17.1 1.16.5 1.16.4 1.16.3 1.16.2 1.16.1 1.15.2 1.15.1 1.15 1.14.4 1.14.3 1.14.2 1.13.2 1.12.2 1.12.1 1.12 1.11.2 1.11 1.10.2 1.10 1.9.4 1.9 1.8.9 1.8.8 1.8 1.7.10 1.7.2 1.6.4 1.6.2"
+
+            # Check if the input version is in the list of valid versions
+            if [[ $valid_versions =~ (^|[[:space:]])$input_version($|[[:space:]]) ]]; then
+                forge="$input_version"
+                prompt_eula_mc
+                install_forge
+            else
+               echo -e "\e[31m● The specified version is either invalid or deprecated.\e[0m"
+            fi
+            ;;
+        6)
             break
             ;;
         *)
@@ -354,11 +465,11 @@ function check_config {
                 launchVanillaServer
                 exit
                 ;;
-            mc_java | mc_java_paper | mc_java_purpur)
+            mc_java | mc_java_paper | mc_java_purpur | mc_java_fabric | mc_java_forge)
                 clear
                 display
                 case "$type" in
-                mc_java | mc_java_paper | mc_java_purpur)
+                mc_java | mc_java_paper | mc_java_purpur | mc_java_fabric | mc_java_forge)
                     launchJavaServer
                     ;;
                 esac
