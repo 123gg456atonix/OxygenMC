@@ -496,6 +496,9 @@ function ProxyMenu {
                echo -e "\e[31m● The specified version is either invalid or deprecated.\e[0m"
             fi
             ;;
+        2)
+            break
+            ;;
         *)
             echo -e "\e[31m● Invalid choice. Please try again.\e[0m"
             ;;
