@@ -119,7 +119,7 @@ function launchJavaServer {
 
 function launchBedrockVanillaServer {
     echo -e "\033[92m● Starting Minecraft Bedrock Server...\e[0m"
-    echo -e "Currently the bedrock install script is broken/not updated. If files not downloaded Please download the latest version of Bedrock vanilla from https://www.minecraft.net/en-us/download/server/bedrock "
+    echo -e "Currently, the bedrock install script is broken/not updated. If files are not downloaded, please download the latest version of Bedrock vanilla from https://www.minecraft.net/en-us/download/server/bedrock "
     LD_LIBRARY_PATH=. ./bedrock_server
 }
 
@@ -322,38 +322,86 @@ function install_velocity {
 }
 
 function install_bedrock {
-    #!/bin/bash
     echo -e "\033[93m○ Downloading and Installing Required Softwares...\e[0m"
-        # Minecraft CDN Akamai blocks script user-agents
+
     RANDVERSION=$(echo $((1 + $RANDOM % 4000)))
+
+    # Fetch the latest version number from the Mojang version API
     if [ -z "${BEDROCK_VERSION}" ] || [ "${BEDROCK_VERSION}" == "latest" ]; then
-        echo -e "\n Downloading latest Bedrock Server"
-        curl -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.$RANDVERSION.212 Safari/537.36" -H "Accept-Language: en" -H "Accept-Encoding: gzip, deflate" -o versions.html.gz https://www.minecraft.net/en-us/download/server/bedrock
-        DOWNLOAD_URL=$(zgrep -o 'https://www.minecraft.net/bedrockdedicatedserver/bin-linux/[^"]*' versions.html.gz)
-    else
-        echo -e "\n Downloading ${BEDROCK_VERSION} Bedrock Server"
-        DOWNLOAD_URL=https://www.minecraft.net/bedrockdedicatedserver/bin-linux/bedrock-server-1.21.102.1.zip
+        echo -e "\033[93m○ Fetching latest Bedrock version...\e[0m"
+        BEDROCK_VERSION=$(curl -s "https://raw.githubusercontent.com/nicholasgasior/bedrock-server-manager/main/bedrock_version" 2>/dev/null || echo "")
+
+        # Fallback: scrape Minecraft site
+        if [ -z "$BEDROCK_VERSION" ]; then
+            curl -s -L \
+                -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.${RANDVERSION}.212 Safari/537.36" \
+                -H "Accept-Language: en" \
+                -o versions.html \
+                "https://www.minecraft.net/en-us/download/server/bedrock"
+
+            BEDROCK_VERSION=$(grep -oP 'bedrock-server-\K[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' versions.html | head -1)
+            rm -f versions.html
+        fi
+
+        if [ -z "$BEDROCK_VERSION" ]; then
+            echo -e "\e[31m● Could not detect latest Bedrock version. Please set BEDROCK_VERSION manually (e.g. 1.21.2.1).\e[0m"
+            exit 1
+        fi
+
+        echo -e "\033[92m● Detected Bedrock version: $BEDROCK_VERSION\e[0m"
     fi
-    DOWNLOAD_FILE=$(echo ${DOWNLOAD_URL} | cut -d"/" -f5) # Retrieve archive name
-    #echo -e "backing up config files"
-    
-    rm -rf *.bak versions.html.gz
-    echo -e "\033[93m○ Installing Vanilla Bedrock Server"
-    curl -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.$RANDVERSION.212 Safari/537.36" -H "Accept-Language: en" -o $DOWNLOAD_FILE $DOWNLOAD_URL
-    echo -e "Unpacking server files"
-    unzip -o $DOWNLOAD_FILE
-    echo -e "\033[93m○ Cleaning up after installing\e[0m"
-    echo -e "\033[93m○ Restoring backup config files - on first install there will be file not found errors which you can ignore.\e[0m"
-    cp -rf server.properties.bak server.properties
-    cp -rf permissions.json.bak permissions.json
-    cp -rf allowlist.json.bak allowlist.json
-    sed -i "s|^server-port=.*|server-port="$SERVER_PORT"|g" server.properties
-    sed -i "s|^server-name=.*|server-name="OxygenMC Multi-egg https://discord.gg/XrqErRqXCu"|g" server.properties
-    rm -rf *.bak
-    rm -rf *.txt
+
+    DOWNLOAD_URL="https://www.minecraft.net/bedrockdedicatedserver/bin-linux/bedrock-server-${BEDROCK_VERSION}.zip"
+    DOWNLOAD_FILE="bedrock-server-${BEDROCK_VERSION}.zip"
+
+    echo -e "\033[93m○ Downloading Bedrock Server ${BEDROCK_VERSION}...\e[0m"
+    curl -L \
+        -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.${RANDVERSION}.212 Safari/537.36" \
+        -H "Accept-Language: en" \
+        -H "Accept-Encoding: identity" \
+        -o "$DOWNLOAD_FILE" \
+        "$DOWNLOAD_URL"
+
+    if [ ! -f "$DOWNLOAD_FILE" ] || [ ! -s "$DOWNLOAD_FILE" ]; then
+        echo -e "\e[31m● Download failed. Check your BEDROCK_VERSION or try again later.\e[0m"
+        exit 1
+    fi
+
+    echo -e "\033[93m○ Unpacking server files...\e[0m"
+    unzip -o "$DOWNLOAD_FILE"
+    rm -f "$DOWNLOAD_FILE"
+
+    if [ ! -f "bedrock_server" ]; then
+        echo -e "\e[31m● Extraction failed — bedrock_server binary not found.\e[0m"
+        exit 1
+    fi
+
+    echo -e "\033[93m○ Applying configuration...\e[0m"
+
+    # Only restore backups if they exist
+    [ -f "server.properties.bak" ] && cp -f server.properties.bak server.properties
+    [ -f "permissions.json.bak" ]  && cp -f permissions.json.bak permissions.json
+    [ -f "allowlist.json.bak" ]    && cp -f allowlist.json.bak allowlist.json
+
+    # Write server.properties if it doesn't exist yet
+    if [ ! -f "server.properties" ]; then
+        cat <<EOF > server.properties
+server-name=OxygenMC
+server-port=${SERVER_PORT:-19132}
+server-portv6=19133
+online-mode=true
+EOF
+    else
+        sed -i "s|^server-port=.*|server-port=${SERVER_PORT:-19132}|g" server.properties
+    fi
+
+    sed -i "s|^server-name=.*|server-name=OxygenMC Multi-egg https://discord.gg/XrqErRqXCu|g" server.properties
+
+    rm -f *.bak *.txt
     chmod +x bedrock_server
+
     create_config "mc_bedrock_vanilla"
-    echo -e "\033[92mInstall Completed\e[0m"
+    echo -e "\033[92m● Install Completed\e[0m"
     display
     launchBedrockVanillaServer
     exit
