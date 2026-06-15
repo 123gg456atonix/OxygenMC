@@ -119,7 +119,7 @@ function launchJavaServer {
 
 function launchBedrockVanillaServer {
     echo -e "\033[92m● Starting Minecraft Bedrock Server...\e[0m"
-    echo -e "Currently, the bedrock install script is broken/not updated. If files are not downloaded, please download the latest version of Bedrock vanilla from https://www.minecraft.net/en-us/download/server/bedrock "
+    echo -e "If Currently, the bedrock install script is broken/not updated. If files are not downloaded, please download the latest version of Bedrock vanilla from https://www.minecraft.net/en-us/download/server/bedrock "
     LD_LIBRARY_PATH=. ./bedrock_server
 }
 
@@ -326,29 +326,58 @@ function install_bedrock {
 
     RANDVERSION=$(echo $((1 + $RANDOM % 4000)))
 
-    # Fetch the latest version number from the Mojang version API
-    if [ -z "${BEDROCK_VERSION}" ] || [ "${BEDROCK_VERSION}" == "latest" ]; then
-        echo -e "\033[93m○ Fetching latest Bedrock version...\e[0m"
-        BEDROCK_VERSION=$(curl -s "https://raw.githubusercontent.com/nicholasgasior/bedrock-server-manager/main/bedrock_version" 2>/dev/null || echo "")
+    # Known stable Bedrock versions
+    VALID_BEDROCK_VERSIONS="1.21.2.1 1.21.1.3 1.21.0.3 1.20.81.01 1.20.80.05 1.20.73.01 1.20.72.01 1.20.71.01 1.20.62.02 1.20.61.01 1.20.60.03 1.20.51.01 1.20.50.03 1.20.41.02 1.20.40.01 1.20.32.02 1.20.31.01 1.20.30.02 1.20.15.01 1.20.12.01 1.20.10.01 1.20.1.02 1.20.0.01 1.19.83.01 1.19.81.01 1.19.80.05 1.19.73.02 1.19.72.01 1.19.71.02 1.19.63.01 1.19.62.01 1.19.60.04 1.19.51.01 1.19.50.02 1.19.41.01 1.19.40.02 1.19.31.01 1.19.30.04 1.19.22.01 1.19.21.01 1.19.20.02 1.19.11.01 1.19.10.03 1.19.2.02 1.19.1.01 1.19.0.31"
 
-        # Fallback: scrape Minecraft site
-        if [ -z "$BEDROCK_VERSION" ]; then
-            curl -s -L \
-                -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.${RANDVERSION}.212 Safari/537.36" \
-                -H "Accept-Language: en" \
-                -o versions.html \
-                "https://www.minecraft.net/en-us/download/server/bedrock"
+    clear
+    display
+    echo -e "\e[36m● Available Bedrock Server Versions:\e[0m"
+    echo -e "\e[90m─────────────────────────────────────────────────────────\e[0m"
 
-            BEDROCK_VERSION=$(grep -oP 'bedrock-server-\K[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' versions.html | head -1)
-            rm -f versions.html
+    # Print versions in columns of 4
+    col=0
+    for v in $VALID_BEDROCK_VERSIONS; do
+        printf "\e[32m%-22s\e[0m" "$v"
+        col=$((col + 1))
+        if [ $col -eq 4 ]; then
+            echo ""
+            col=0
         fi
+    done
+    [ $col -ne 0 ] && echo ""
+
+    echo -e "\e[90m─────────────────────────────────────────────────────────\e[0m"
+    echo -e "\e[36m● Enter the Bedrock version you want (or type 'latest'):\e[0m"
+    read -r input_version
+
+    input_version=$(echo "$input_version" | tr '[:upper:]' '[:lower:]')
+
+    if [ "$input_version" == "latest" ] || [ -z "$input_version" ]; then
+        echo -e "\033[93m○ Fetching latest Bedrock version from Minecraft website...\e[0m"
+
+        curl -s -L \
+            -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.${RANDVERSION}.212 Safari/537.36" \
+            -H "Accept-Language: en" \
+            -o versions.html \
+            "https://www.minecraft.net/en-us/download/server/bedrock"
+
+        BEDROCK_VERSION=$(grep -oP 'bedrock-server-\K[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' versions.html | head -1)
+        rm -f versions.html
 
         if [ -z "$BEDROCK_VERSION" ]; then
-            echo -e "\e[31m● Could not detect latest Bedrock version. Please set BEDROCK_VERSION manually (e.g. 1.21.2.1).\e[0m"
+            echo -e "\e[31m● Could not auto-detect latest version. Please enter a version manually.\e[0m"
             exit 1
         fi
 
-        echo -e "\033[92m● Detected Bedrock version: $BEDROCK_VERSION\e[0m"
+        echo -e "\033[92m● Latest version detected: $BEDROCK_VERSION\e[0m"
+
+    elif [[ $VALID_BEDROCK_VERSIONS =~ (^|[[:space:]])$input_version($|[[:space:]]) ]]; then
+        BEDROCK_VERSION="$input_version"
+        echo -e "\033[92m● Selected version: $BEDROCK_VERSION\e[0m"
+
+    else
+        echo -e "\e[31m● Invalid version '$input_version'. Please choose from the list above or type 'latest'.\e[0m"
+        exit 1
     fi
 
     DOWNLOAD_URL="https://www.minecraft.net/bedrockdedicatedserver/bin-linux/bedrock-server-${BEDROCK_VERSION}.zip"
@@ -363,7 +392,7 @@ function install_bedrock {
         "$DOWNLOAD_URL"
 
     if [ ! -f "$DOWNLOAD_FILE" ] || [ ! -s "$DOWNLOAD_FILE" ]; then
-        echo -e "\e[31m● Download failed. Check your BEDROCK_VERSION or try again later.\e[0m"
+        echo -e "\e[31m● Download failed. The version may not exist or the Minecraft CDN is blocking the request. Try a different version.\e[0m"
         exit 1
     fi
 
@@ -378,12 +407,10 @@ function install_bedrock {
 
     echo -e "\033[93m○ Applying configuration...\e[0m"
 
-    # Only restore backups if they exist
     [ -f "server.properties.bak" ] && cp -f server.properties.bak server.properties
     [ -f "permissions.json.bak" ]  && cp -f permissions.json.bak permissions.json
     [ -f "allowlist.json.bak" ]    && cp -f allowlist.json.bak allowlist.json
 
-    # Write server.properties if it doesn't exist yet
     if [ ! -f "server.properties" ]; then
         cat <<EOF > server.properties
 server-name=OxygenMC
