@@ -32,10 +32,10 @@
             "name": "Java Version",
             "description": "Version of Java that you want to use.",
             "env_variable": "JAVA_VERSION",
-            "default_value": "21",
+            "default_value": "25",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|numeric|max:24|min:8",
+            "rules": "required|numeric|max:26|min:8",
             "field_type": "text"
         }
     ]
