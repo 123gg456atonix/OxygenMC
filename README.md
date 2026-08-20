@@ -79,6 +79,6 @@ Contributors help shape the future of OxygenMC. There are currently one main con
 <p align="center">
 Join my discord for additional support https://discord.com/invite/XrqErRqXCu
 </p>
-
-
-v2
+<p align="center">
+v2.1
+</p>
