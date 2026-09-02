@@ -68,13 +68,14 @@ Oxygen MC|ghcr.io/123gg456atonix/oxygenmc:main
 
 <br/><h2 align="center">👥 Contributors</h2>
 
-Contributors help shape the future of OxygenMC. There are currently one main contributors:
+Contributors help shape the future of OxygenMC:
 
-- [**123gg456**](https://github.com/123gg456atonix) - Made the egg.
+- [**123gg456**](https://github.com/123gg456atonix) - Made OxygenMC.
+- [**heyitslumi**](https://github.com/lonersoft/aether) - Original Author (Aether).
 
 <br/><br/>
 <p align="center">
-  $\color{#4b4950}{\textsf{© 2025 OxygenMC. Made with ❤️ by 123gg456.}}$
+  $\color{#4b4950}{\textsf{© 2026 OxygenMC. Made with ❤️ by 123gg456.}}$
 </p>
 <p align="center">
 Join my discord for additional support https://discord.com/invite/XrqErRqXCu
